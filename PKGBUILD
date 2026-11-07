@@ -39,9 +39,9 @@ depends=(
   'unzip'
 )
 source=("${pkgname}-${pkgver}.zip::${url}/archive/v${pkgver}.zip"
-        "${pkgname}.install"
+        "${pkgname}.install")
 sha256sums=('753286515333e5f9fe3979fe6c3c8db52067c7a16a64076a284acd38934e7247'
-            'd614323822b83612688a1192daedb3f7bf69f0d1a0e1df08411f5c32e4adde05'
+            'd614323822b83612688a1192daedb3f7bf69f0d1a0e1df08411f5c32e4adde05')
 install="${pkgname}.install"
 
 build() {
@@ -78,6 +78,15 @@ package() {
   # Move all files in place
   mkdir -p "${pkgdir}/var/lib/dokku/core-plugins/available"
   cp -R "${pkgname}-${pkgver}/plugins/." "${pkgdir}/var/lib/dokku/core-plugins/available"
+
+  # Arch fixes (the Debian package would do these via dpkg conffiles):
+  # 1. sudoers rules the docker-local scheduler needs — without them every
+  #    deploy dies in checks (sudo docker-container-healthchecker as 'dokku')
+  install -Dm440 "${pkgname}-${pkgver}/docker/etc/sudoers.d/dokku-docker" \
+    "${pkgdir}/etc/sudoers.d/dokku"
+  # 2. events plugin assumes a Debian 'syslog' user
+  sed -i 's/chown syslog:dokku/chown root:dokku/' \
+    "${pkgdir}/var/lib/dokku/core-plugins/available/20_events/install"
 
   # Version
   echo $pkgver > "${pkgdir}/var/lib/dokku/VERSION"

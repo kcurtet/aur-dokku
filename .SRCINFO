@@ -35,5 +35,9 @@ pkgbase = dokku
 	depends = sudo
 	depends = sshcommand
 	depends = unzip
+	source = dokku-0.38.34.zip::https://github.com/dokku/dokku/archive/v0.38.34.zip
+	source = dokku.install
+	sha256sums = 753286515333e5f9fe3979fe6c3c8db52067c7a16a64076a284acd38934e7247
+	sha256sums = d614323822b83612688a1192daedb3f7bf69f0d1a0e1df08411f5c32e4adde05
 
 pkgname = dokku
